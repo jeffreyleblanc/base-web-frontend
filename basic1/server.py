@@ -2,36 +2,52 @@
 
 # Copyright Jeffrey LeBlanc, 2022. MIT License.
 
+# Python
+from pathlib import Path
 import asyncio
-import datetime
-import signal
 import logging
+# Tornado
 import tornado.web
 
 
-class MainHandler(tornado.web.RequestHandler):
+
+class BaseHandler(tornado.web.RequestHandler):
+
+    def write_json(self, obj, indent=None):
+        self.set_header("Content-Type", "application/json")
+        s = json.dumps(obj,indent=indent)
+        self.write(s)
+
+class MainHandler(BaseHandler):
     def get(self):
-        now = datetime.datetime.now()
-        self.write(f"Hello world at {now}\n")
+        self.render("index.html")
+
+class APIHandler(BaseHandler):
+    def post(self):
+        data = tornado.escape.json_decode(self.request.body)
+        print('DATA!',data)
+        self.write_json({'status':'OK'})
 
 class MyApp(tornado.web.Application):
 
     def __init__(self):
-        self._handlers = []
-        self._settings = {}
-        self.initialize()
-        super().__init__(self._handlers,**self._settings)
+        here = Path(__file__).parent
+        static_dir = here / 'static'
+        template_dir = here /'templates'
 
-    def initialize(self):
-        # Handlers
-        self._handlers += [
+        # Settings
+        settings = dict(
+            static_path= static_dir,
+            template_path= template_dir,
+            autoreload= True,
+            debug= True
+        )
+
+        handlers = [
             (r"/", MainHandler)
         ]
 
-        # Settings
-        self._settings = dict(
-            debug= True
-        )
+        super().__init__(handlers,**settings)
 
 
 async def main():
