@@ -18,9 +18,9 @@ class BaseHandler(tornado.web.RequestHandler):
         s = json.dumps(obj,indent=indent)
         self.write(s)
 
-class MainHandler(BaseHandler):
+class MainHandler1(BaseHandler):
     def get(self):
-        self.render("index.html")
+        self.render("index1.html")
 
 class APIHandler(BaseHandler):
     def post(self):
@@ -44,7 +44,7 @@ class MyApp(tornado.web.Application):
         )
 
         handlers = [
-            (r"/", MainHandler)
+            (r"^/1/?$", MainHandler1)
         ]
 
         super().__init__(handlers,**settings)
