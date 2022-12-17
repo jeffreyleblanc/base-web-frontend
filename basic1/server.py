@@ -22,6 +22,10 @@ class MainHandler1(BaseHandler):
     def get(self):
         self.render("index1.html")
 
+class MainHandler2(BaseHandler):
+    def get(self):
+        self.render("index2.html")
+
 class APIHandler(BaseHandler):
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
@@ -44,7 +48,8 @@ class MyApp(tornado.web.Application):
         )
 
         handlers = [
-            (r"^/1/?$", MainHandler1)
+            (r"^/1/?$", MainHandler1),
+            (r"^/2/?$", MainHandler2)
         ]
 
         super().__init__(handlers,**settings)
