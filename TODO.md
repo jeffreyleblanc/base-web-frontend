@@ -1,11 +1,16 @@
 # Todo
 
-* [x] basic1 => no-build
-* [x] 'proj' => 'example-N-description'
-* [x] index1.html uses the tailwind js
-* [x] remove the old tailwind css
-    * [x] make sure documented in notes where it comes from
-* [x] tornado server better job picking up index `/d`
-* [x] make version of example/proj2 that fully uses modules and map
-
+* [ ] make a README
+* [ ] make a notes folder with
+    * [ ] node-on-linux.md
+    * [ ] the tailwind files
+    * [ ] anything else from jknowledge that is relevant
+    * [ ] anything else from web-ui-scaffolds that is relevant
+* [ ] generate more scaffolds
+    * [ ] no-build => scaffold-no-build
+    * [ ] make a scaffold-tailwind
+    * [ ] make a scaffold-esbuild
+    * [ ] make a scaffold-vite
+        * [ ] pure vue
+        * [ ] vue with tailwind
 
