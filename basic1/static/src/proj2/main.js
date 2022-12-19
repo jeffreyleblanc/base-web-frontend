@@ -11,18 +11,18 @@ async function async_main(){
 
     // Make the data manager and global store
     G.store = Vue.reactive({
-        user: 'yak',
+        user: 'alice',
         entries: []
     });
     G.data = new DataManager(G.store);
 
     // Create the main app
     const template = `
-    <div>
-        <nav>
+    <div class="flex flex-col">
+        <nav class="w-full h-12 px-4 flex flex-row items-center bg-gray-900 text-white">
             <div>Hello <b>{{user}}</b></div>
         </nav>
-        <main>
+        <main class="p-4">
             <entry-adder></entry-adder>
             <entry-browser :entries="entries"></entry-browser>
         </main>
