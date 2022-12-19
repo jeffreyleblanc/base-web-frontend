@@ -18,3 +18,5 @@ Links:
 https://tailwindcss.com/docs/installation/play-cdn
 
 https://www.unpkg.com/browse/tailwindcss@2.2.19/dist/
+
+Pull from <https://cdn.tailwindcss.com/3.2.4>

@@ -1,18 +1,23 @@
 /* Copyright Jeffrey LeBlanc */
 
 const template = `
-<section class="EntryBrowser">
-    <h3>Entries</h3>
-    <div>{{entries.length}}</div>
-    <div 
-        class="stream-entry"
+<section class="flex flex-col gap-y-4">
+    <h3 class="font-bold">Entries</h3>
+    <div>Number of entries: {{entries.length}}</div>
+    <div
+        class="p-4 flex flex-col gap-y-2 bg-gray-300 rounded"
         v-for="e in entries"
         :key="e.id"
     >
-        <div class="txt-bold">{{e.text}}</div>
-        <div class="txt-small txt-grey">{{e.id}}</div>
-        <div class="txt-small txt-grey">{{e.modified}}</div>
-        <button class="btn btn-red" :data-id="e.id" @click="on_delete($event)">delete</button>
+        <div class="font-bold">
+            {{e.text}}
+        </div>
+        <div class="text-sm text-gray-700">
+            {{e.id}} | {{e.modified}}
+        </div>
+        <button class="w-fit h-6 bg-red-600 text-sm text-white px-2 rounded" :data-id="e.id" @click="on_delete($event)">
+            delete
+        </button>
     </div>
 </section>`;
 

@@ -22,9 +22,9 @@ async function async_main(){
         <nav class="w-full h-12 px-4 flex flex-row items-center bg-gray-900 text-white">
             <div>Hello <b>{{user}}</b></div>
         </nav>
-        <main class="p-4">
-            <entry-adder></entry-adder>
-            <entry-browser :entries="entries"></entry-browser>
+        <main class="p-4 flex flex-col gap-y-4">
+            <EntryAdder/>
+            <EntryBrowser :entries="entries"/>
         </main>
     <div>`;
     G.V = Vue.createApp({
