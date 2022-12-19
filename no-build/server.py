@@ -10,7 +10,6 @@ import logging
 import tornado.web
 
 
-
 class BaseHandler(tornado.web.RequestHandler):
 
     def write_json(self, obj, indent=None):
@@ -18,13 +17,10 @@ class BaseHandler(tornado.web.RequestHandler):
         s = json.dumps(obj,indent=indent)
         self.write(s)
 
-class MainHandler1(BaseHandler):
-    def get(self):
-        self.render("index1.html")
-
-class MainHandler2(BaseHandler):
-    def get(self):
-        self.render("index2.html")
+class MainHandler(BaseHandler):
+    def get(self, number):
+        template_name = f"index{number}.html"
+        self.render(template_name)
 
 class APIHandler(BaseHandler):
     def post(self):
@@ -48,8 +44,7 @@ class MyApp(tornado.web.Application):
         )
 
         handlers = [
-            (r"^/1/?$", MainHandler1),
-            (r"^/2/?$", MainHandler2)
+            (r"^/example/(?P<number>\d)/?$", MainHandler)
         ]
 
         super().__init__(handlers,**settings)
