@@ -2,10 +2,15 @@
 
 This is an SPA setup that I have found works pretty effectively.
 
+Core tenets:
+
+* Use a global data management pattern as much as possible
+* Add a global singleton object to the vue components that provides access to the globals
+
 ## Dependencies
 
-* tailwind
-* vue3
+The idea is to just depend on `Vue3`.
+We are also using Vue's 
 
 ## Basic Ideas
 
@@ -73,3 +78,27 @@ class DataManager {
 ```
 
 So we make two reactive containers. Of course these could be combined if we wanted.
+
+
+## Interfacing with non Vue Components
+
+Now what if we have a system that is not vue based (like a canvas or svg engine),
+how can we hook it into the overall system?
+
+Let's check on some options
+
+* since we want to use a global state system, updating a reactive attribute can just use the
+  appropriate data manager method
+* to listen for update, look at:
+    * adding a reactive listener with vue systems
+    * make some of the data manager handlers handle this themselves
+    * similar to above, but implement a MessageHub
+        * we can then register vue components with the MessageHub to get updates
+    * we can "shadow" MessageHub channels in the a reactive vue store with something like
+      `this.msghub = reactive({});`
+
+## Things to Test
+
+* How can we add key/value to a setup reactive store?
+    * probably as simple as `this.store.new_key = "value"`
+
