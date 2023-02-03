@@ -44,7 +44,7 @@ class MyApp(tornado.web.Application):
         )
 
         handlers = [
-            (r"^/example/(?P<number>\d)/?$", MainHandler)
+            (r"^/example/(?P<number>\d+)/?$", MainHandler)
         ]
 
         super().__init__(handlers,**settings)
