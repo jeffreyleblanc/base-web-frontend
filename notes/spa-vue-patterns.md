@@ -102,3 +102,43 @@ Let's check on some options
 * How can we add key/value to a setup reactive store?
     * probably as simple as `this.store.new_key = "value"`
 
+
+## How to do things
+
+
+Let's consider the following mapping:
+
+
+/                        => list of authors
+/auth/<author>/          => author info + list of posts
+/auth/<author>/<post>/   => specific post
+/tag/<tag>               => composite of authors and posts as relevant
+
+In a subcomponent how should we fetch from a larger set of items?
+
+A couple options:
+
+we keep a global uistate object that help synchronize sub filtering
+=> awkward because it seems a little brittle and you have to fork multiple things
+
+We use a prop sent down that can be used as a filter in a computed pull from the
+global store
+
+For the above, we also implement using vue router to set this up
+
+How do we generate composite object trees? From multiple discrete data sources
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

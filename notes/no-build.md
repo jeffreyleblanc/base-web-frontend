@@ -19,8 +19,9 @@ is a good place. Note that this url will resolve to the most recent vue version,
 To fetch example files:
 
 ```sh
-wget https://unpkg.com/vue@3.2.45/dist/vue.global.prod.js
-wget https://unpkg.com/vue@3.2.45/dist/vue.esm-browser.prod.js
+wget -O vue.3.2.45.global.prod.js https://unpkg.com/vue@3.2.45/dist/vue.global.prod.js
+wget -O vue.3.2.45.esm-browser.prod.js https://unpkg.com/vue@3.2.45/dist/vue.esm-browser.prod.js
+wget -O vue-router.4.1.6.esm-browser.js https://unpkg.com/vue-router@4.1.6/dist/vue-router.esm-browser.js
 ```
 
 Further links:
