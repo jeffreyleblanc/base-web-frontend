@@ -32,13 +32,10 @@ export default function main(){
         template,
         components: { MainToolbar, EntryAdder, EntryBrowser },
         data(){ return {} },
-        computed: {
-            user(){ return this.$G.store.user; }
-        }
     });
 
-    // Add the global store
-    G.V.config.globalProperties.$G = G;
+    // Attach the global store
+    G.V.use(G);
 
     // Mount and export
     G.V.mount('#mount');

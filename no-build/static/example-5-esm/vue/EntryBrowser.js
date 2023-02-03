@@ -6,14 +6,16 @@ const template = `
 <section class="flex flex-col gap-y-4">
     <h3 class="font-bold">Entries</h3>
     <div>Number of entries: {{entries.length}}</div>
-    <EntryBrowser
+    <EntryBrowserEntry
         v-for="e in entries"
         :key="e.id"
+        :entry="e"
     />
 </section>`;
 
 export default {
     template,
+    components: { EntryBrowserEntry },
     data(){ return {
         ask_before_delete: false
     } },
