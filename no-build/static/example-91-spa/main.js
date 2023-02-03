@@ -1,6 +1,7 @@
 /* Copyright Jeffrey LeBlanc */
 
 import {reactive,createApp} from "vue"
+import {createRouter,createWebHashHistory} from "vuerouter"
 
 import {POST_JSON} from "./tools/fetch.js"
 import {G} from "./global.js"
