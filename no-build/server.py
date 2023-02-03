@@ -58,6 +58,7 @@ async def main():
     # Setup the server
     http_server = MyApp()
     http_server.listen(8888)
+    print("Running at 0.0.0.0:8888")
 
     # Setup the shutdown systems
     shutdown_trigger = asyncio.Event()
