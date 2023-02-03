@@ -3,33 +3,25 @@
 import {reactive,createApp} from "vue"
 import {createRouter,createWebHashHistory} from "vuerouter"
 
+import Home from "./Home.js"
+import About from "./About.js"
+import Info from "./Info.js"
+
 export default function main(){
     console.log("hello from vue router test.");
 
     const template = `
-    <div id="app">
+    <div class="p-4">
         <h1>Hello App!</h1>
-        <p>
+        <nav class="flex flex-row gap-x-8">
             <router-link to="/">go-home</router-link>
             <router-link to="/about">go-about</router-link>
             <router-link to="/info">go-info</router-link>
-        </p>
-        <!-- route outlet -->
-        <!-- component matched by the route will render here -->
-        <router-view></router-view>
+        </nav>
+        <main>
+            <router-view></router-view>
+        </main>
     </div>`;
-
-    // 1. Define route components.
-    // These can be imported from other files
-    const Home = {
-        template: '<div>Home</div>'
-    }
-    const About = {
-        template: '<div>About</div>'
-    }
-    const Info = {
-        template: '<div>Info</div>'
-    }
 
     // 2. Define some routes
     // Each route should map to a component.
