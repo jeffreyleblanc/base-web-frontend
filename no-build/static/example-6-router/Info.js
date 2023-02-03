@@ -1,6 +1,6 @@
 
 const template = `
-    <div>Home component</div>
+    <div>Info component</div>
 `;
 
 export default {
