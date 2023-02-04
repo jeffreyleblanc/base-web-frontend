@@ -45,14 +45,16 @@ export default function main(){
     });
     G.data = new DataManager(G.store);
 
+    // In theory `base: "/example/91/" could be an option to createRouter
+    // but that might be an old option, and doesn't seem to work
+    const pathbase = "/example/91/";
     const routes = [
-        { name: "main", path: "/", component: MainPage },
-        { name: "status", path: "/status", component: StatusPage },
-        { name: "collection", path: "/collection/:id", component: CollectionPage }
+        { name: "main", path: pathbase, component: MainPage },
+        { name: "status", path: pathbase+"status", component: StatusPage },
+        { name: "collection", path: pathbase+"collection/:id", component: CollectionPage }
     ];
 
     const router = createRouter({
-        base: "/example/91",
         history: createWebHistory(),
         // history: createWebHashHistory(),
         routes,
