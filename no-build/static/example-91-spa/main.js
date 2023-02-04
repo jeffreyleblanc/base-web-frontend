@@ -8,6 +8,7 @@ import DataManager from "./DataManager.js"
 import MainToolbar from "./MainToolbar.js"
 import MainPage from "./MainPage.js"
 import StatusPage from "./StatusPage.js"
+import CollectionPage from "./CollectionPage.js"
 
 
 export default function main(){
@@ -45,8 +46,9 @@ export default function main(){
     G.data = new DataManager(G.store);
 
     const routes = [
-        { path: '/', component: MainPage },
-        { path: '/status', component: StatusPage }
+        { path: "/", component: MainPage },
+        { path: "/status", component: StatusPage },
+        { path: "/collection/:id", component: CollectionPage }
     ];
 
     const router = createRouter({
