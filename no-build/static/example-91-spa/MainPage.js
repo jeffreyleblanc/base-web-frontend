@@ -6,7 +6,7 @@ const template = `
     <template v-if="collections.length">
         <div v-for="c in collections" :key="c.id">
             <div>{{c.name}}</div>
-            <router-link :to="clink(c)">link</router-link>
+            <router-link :to="{name:'collection',params:{id:c.id}}">link</router-link>
         </div>
     </template>
     <template v-else>
@@ -19,8 +19,6 @@ export default {
     data(){ return {} },
     computed: {
         collections(){ return this.$G.store.collections; }
-    },
-    methods: {
-        clink(c){ return "/collection/"+c.id }
     }
 };
+

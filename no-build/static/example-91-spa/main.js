@@ -1,7 +1,7 @@
 /* Copyright Jeffrey LeBlanc */
 
 import {reactive,createApp} from "vue"
-import {createRouter,createWebHashHistory} from "vuerouter"
+import {createRouter,createWebHistory,createWebHashHistory} from "vuerouter"
 
 import {G} from "./global.js"
 import DataManager from "./DataManager.js"
@@ -46,16 +46,16 @@ export default function main(){
     G.data = new DataManager(G.store);
 
     const routes = [
-        { path: "/", component: MainPage },
-        { path: "/status", component: StatusPage },
-        { path: "/collection/:id", component: CollectionPage }
+        { name: "main", path: "/", component: MainPage },
+        { name: "status", path: "/status", component: StatusPage },
+        { name: "collection", path: "/collection/:id", component: CollectionPage }
     ];
 
     const router = createRouter({
-        // 4. Provide the history implementation to use.
-        // We are using the hash history for simplicity here.
-        history: createWebHashHistory(),
-        routes, // short for `routes: routes`
+        base: "/example/91",
+        history: createWebHistory(),
+        // history: createWebHashHistory(),
+        routes,
     });
 
     // Create the main app
