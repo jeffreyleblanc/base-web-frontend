@@ -3,11 +3,11 @@
 import {reactive,createApp} from "vue"
 import {createRouter,createWebHashHistory} from "vuerouter"
 
-import {POST_JSON} from "./tools/fetch.js"
 import {G} from "./global.js"
 import DataManager from "./DataManager.js"
-import MainToolbar from "./vue/MainToolbar.js"
-import MainPage from "./vue/MainPage.js"
+import MainToolbar from "./MainToolbar.js"
+import MainPage from "./MainPage.js"
+import StatusPage from "./StatusPage.js"
 
 
 export default function main(){
@@ -44,22 +44,35 @@ export default function main(){
     });
     G.data = new DataManager(G.store);
 
+    const routes = [
+        { path: '/', component: MainPage },
+        { path: '/status', component: StatusPage }
+    ];
+
+    const router = createRouter({
+        // 4. Provide the history implementation to use.
+        // We are using the hash history for simplicity here.
+        history: createWebHashHistory(),
+        routes, // short for `routes: routes`
+    });
+
     // Create the main app
     const template = `
     <div class="flex flex-col">
         <MainToolbar/>
         <main class="p-4 flex flex-col gap-y-4">
-            <MainPage/>
+            <router-view></router-view>
         </main>
     <div>`;
     G.V = createApp({
         template,
-        components: { MainPage },
+        components: { MainToolbar, MainPage, StatusPage },
         data(){ return {} },
     });
 
     // Attach the global store
     G.V.use(G);
+    G.V.use(router);
 
     // Mount and export
     G.V.mount('#mount');
