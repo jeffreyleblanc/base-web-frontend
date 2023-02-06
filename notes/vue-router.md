@@ -8,6 +8,17 @@ https://unpkg.com/browse/vue-router@4.1.6/dist/
 
 https://unpkg.com/vue-router@4.1.6/dist/vue-router.esm-browser.js
 
+If you get the source from above and want to a no-build import, it helps to disable the devtools,
+by modifying the source as follows:
+
+```javascript
+/* On line 7, comment the line out: */
+// import { setupDevtoolsPlugin } from '@vue/devtools-api';
+
+/* On line ~2509, insert a `return`: */
+function addDevtools(app, router, matcher) { return
+```
+
 ## Make Your Own
 
 A basic sketch for a simple make our own router system:
