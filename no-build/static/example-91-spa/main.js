@@ -9,7 +9,7 @@ import MainToolbar from "./MainToolbar.js"
 import MainPage from "./MainPage.js"
 import StatusPage from "./StatusPage.js"
 import CollectionPage from "./CollectionPage.js"
-
+import DATA from "./data.js"
 
 export default function main(){
     console.log("Running Main!");
@@ -17,31 +17,7 @@ export default function main(){
     // Make the data manager and global store
     G.store = reactive({
         user: "bob",
-        collections: [{
-            id: "a1",
-            name: "Collection 1",
-            info: "A useful collection"
-        },{
-            id: "a2",
-            name: "Collection 2",
-            info: "A sort of useful collection"
-        }],
-        items: [{
-            id: "i1",
-            collection: "a1",
-            name: "apple",
-            info: "A fruit"
-        },{
-            id: "i2",
-            collection: "a1",
-            name: "pear",
-            info: "Less common"
-        },{
-            id: "i3",
-            collecton: "a2",
-            name: "cow",
-            info: "Says moo"
-        }]
+        ...DATA
     });
     G.data = new DataManager(G.store);
 

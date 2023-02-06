@@ -6,6 +6,7 @@ const template = `
     <template v-if="collections.length">
         <div v-for="c in collections" :key="c.id">
             <div>{{c.name}}</div>
+            <div>{{c.info}}</div>
             <router-link :to="{name:'collection',params:{id:c.id}}">link</router-link>
         </div>
     </template>
