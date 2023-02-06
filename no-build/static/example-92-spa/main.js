@@ -12,15 +12,32 @@ import CollectionPage from "./CollectionPage.js"
 import ItemPage from "./ItemPage.js"
 import {generate_data} from "./data.js"
 
+function fake_fetch(url, handler){
+    if("/get/"==url){
+        window.setTimeout(()=>{
+            console.log("PING!");
+            const data = generate_data();
+            handler(data);
+        },500);
+    }
+}
+
+
 export default function main(){
     console.log("Running Main!");
 
     // Make the data manager and global store
     G.store = reactive({
         user: "bob",
-        ...generate_data()
+        collections: [],
+        items: []
     });
     G.data = new DataManager(G.store);
+
+    fake_fetch("/get/",(data)=>{
+        G.store.collections = data.collections;
+        G.store.items = data.items;
+    });
 
     // In theory `base: "/example/91/" could be an option to createRouter
     // but that might be an old option, and doesn't seem to work
