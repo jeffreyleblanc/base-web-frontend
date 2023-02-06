@@ -9,6 +9,7 @@ import MainToolbar from "./MainToolbar.js"
 import MainPage from "./MainPage.js"
 import StatusPage from "./StatusPage.js"
 import CollectionPage from "./CollectionPage.js"
+import ItemPage from "./ItemPage.js"
 import DATA from "./data.js"
 
 export default function main(){
@@ -23,16 +24,17 @@ export default function main(){
 
     // In theory `base: "/example/91/" could be an option to createRouter
     // but that might be an old option, and doesn't seem to work
-    const pathbase = "/example/91/";
+    const pathbase = "/"; // "/example/91/";
     const routes = [
         { name: "main", path: pathbase, component: MainPage },
         { name: "status", path: pathbase+"status", component: StatusPage },
-        { name: "collection", path: pathbase+"collection/:id", component: CollectionPage }
+        { name: "collection", path: pathbase+"collection/:id", component: CollectionPage },
+        { name: "item", path: pathbase+"item/:id", component: ItemPage }
     ];
 
     const router = createRouter({
-        history: createWebHistory(),
-        // history: createWebHashHistory(),
+        // history: createWebHistory(),
+        history: createWebHashHistory(),
         routes,
     });
 

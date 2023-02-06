@@ -7,6 +7,7 @@ const template = `
     <template v-if="items.length>0">
         <div v-for="item in items" :key="item.id">
             <div>{{item.id}} | {{item.info}}</div>
+            <router-link :to="{name:'item',params:{id:item.id}}">link</router-link>
         </div>
     </template>
     <template v-else>
