@@ -12,5 +12,12 @@ export default class DataManager {
         }
         return false;
     }
+
+    has_item(id){
+        for(let c of this._store_ref.items){
+            if(c.id == id){ return true; }
+        }
+        return false;
+    }
 }
 
