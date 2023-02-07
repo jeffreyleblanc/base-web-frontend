@@ -18,6 +18,12 @@ const template = `
 export default {
     template,
     data(){ return {} },
+
+    async beforeRouteUpdate(to, from) {
+        // react to route changes...
+        // this.userData = await fetchUser(to.params.id)
+        console.log("route update:",to,from);
+    },
     computed: {
         cid(){
             return this.$route.params.id

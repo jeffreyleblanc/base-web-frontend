@@ -10,6 +10,7 @@ import MainPage from "./MainPage.js"
 import StatusPage from "./StatusPage.js"
 import CollectionPage from "./CollectionPage.js"
 import ItemPage from "./ItemPage.js"
+import NotFoundPage from "./NotFoundPage.js"
 import {generate_data} from "./data.js"
 
 function fake_fetch(url, handler){
@@ -43,9 +44,18 @@ export default function main(){
     // but that might be an old option, and doesn't seem to work
     const pathbase = "/"; // "/example/91/";
     const routes = [
+        { name: "404", path: '/:pathMatch(.*)*', component: NotFoundPage },
         { name: "main", path: pathbase, component: MainPage },
         { name: "status", path: pathbase+"status", component: StatusPage },
-        { name: "collection", path: pathbase+"collection/:id", component: CollectionPage },
+        {
+            name: "collection",
+            path: pathbase+"collection/:id",
+            component: CollectionPage,
+            beforeEnter: (to, from)=>{
+                return (G.data.has_collection(to.params.id))?
+                    true : { name: "404" };
+            }
+        },
         { name: "item", path: pathbase+"item/:id", component: ItemPage }
     ];
 
@@ -79,3 +89,5 @@ export default function main(){
     // Export to window for debugging
     window.G = G;
 }
+
+

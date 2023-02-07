@@ -6,5 +6,11 @@ export default class DataManager {
         this._store_ref = store;
     }
 
+    has_collection(id){
+        for(let c of this._store_ref.collections){
+            if(c.id == id){ return true; }
+        }
+        return false;
+    }
 }
 
