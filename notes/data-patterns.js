@@ -163,6 +163,14 @@ class ObjectTracker {
             vue_list: reactive([])
         };
         this.data_views[name] = view;
+
+        // Because we might add the data view at any time, we need to trigger running the view
+        // Note that this could be expensive (more so than triggering as data comes in)
+        // So we could do things like batch these updates, though that might be overly clever
+        // for a generic system, and be the purview of special cases
+        for(let obj of this._obj_by_pk.values()){
+            this._update_data_view("insert",view,obj.pk,obj);
+        }
     }
 
     _update_data_views(action, obj_pk, obj){
@@ -252,3 +260,37 @@ class ObjectTracker {
         }
     }
 }
+
+// Interlude: Consuming this API ///////////////////////////////////////////////
+
+/*
+Here we start to sketch from the other direction: What does it look like to consume this?
+
+*/
+
+
+function example(){
+
+    const tracker = new DataTracker("Fruit","uuid");
+    tracker.add_data_view("small ones",(fruit)=>{
+        return fruit.weight < 1.0;
+    },(a,b)=>{
+        return a.weight-b.weight;
+    });
+    // the above raises the question though, we might want to develop multiple
+    // ways of sorting the data, such as when we have a table of data.
+    // in this case the filtering might be costly so each data view has a single
+    // filter method, but we could be more flexible with the sorting method, in the
+    // same way we want to add pagination and offset
+
+    // What about the case where we want to track just a **single** object
+    // This happens frequently.
+    // In this case we probably want another method, say a "data-focus"
+    // We also have to make sure the machinary works for this being null
+}
+
+
+
+
+
+
