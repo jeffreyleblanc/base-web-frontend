@@ -136,6 +136,58 @@ function remove_from_list(list, pk_attr, obj_pk){
     if(idx > -1){ list.splice(idx,1); }
 }
 
+
+class ObjectView {
+
+    constructor({
+        pk = undefined,
+        filter_meth = undefined,
+        sort_meth = undefined,
+    }={}){
+        this.filter_meth = filter_meth;
+        this.sort_meth = sort_meth;
+
+        this.pk = pk;
+        this.pk_list = new Set();      //: Arguably redundant since we could use map to check
+        this.vue_map = reactive({});
+        this.vue_list = reactive([]);
+    }
+
+    update(action, obj_pk, obj){
+        if(action=="delete"){
+            if(this.pk_list.has(obj_pk){
+                this.pk_list.delete(obj_pk);
+                delete this.vue_map[obj_pk];
+                remove_from_list(this.vue_list,this.pk,obj_pk);
+            }
+        }else{
+            let resort = false;
+            if(action=="update"){
+                if(this.pk_list.has(obj_pk){
+                    const ref = this.vue_map[obj_pk];
+                    for(let [k,v] of Object.entries(obj){
+                        ref[k] = v;
+                    }
+                    resort = true; // could be made smarter
+                }else{
+                    action = "insert";
+                }
+            }
+            if(action=="insert" && this.filter_meth(obj)){
+                const clone = deepCloneObject(obj);
+                this.pk_list.add(obj_pk);
+                this.vue_map[obj_pk] = clone
+                this.vue_list.push(clone);
+                resort = true;
+            }
+            if(resort){
+                this.vue_list = this.vue_list.sort(this.sort_meth);
+            }
+        }
+    }
+}
+
+
 class ObjectTracker {
 
     constructor(kind, pk){
@@ -143,6 +195,9 @@ class ObjectTracker {
         this.pk = pk;
 
         this._obj_by_pk = new Map();
+
+        // we should a tracking filter...
+        this._track_filter = null;
 
         this._vue_obj = reactive({
             list: [],
@@ -155,13 +210,7 @@ class ObjectTracker {
     //-- Data Views ----------------------------------------------------------//
 
     add_data_view(name, filter_meth, sort_meth){
-        const view = {
-            filter_meth,
-            sort_meth,
-            pk_list: new Set(), //: Arguably redundant since we could use map to check
-            vue_map: reactive({}),
-            vue_list: reactive([])
-        };
+        const view = new DataView({filter_meth,sort_meth});
         this.data_views[name] = view;
 
         // Because we might add the data view at any time, we need to trigger running the view
@@ -175,39 +224,6 @@ class ObjectTracker {
 
     _update_data_views(action, obj_pk, obj){
         this.data_view.forEach(v=>this._update_data_view(v,action,obj_pk,obj));
-    }
-
-    _update_data_view(view, action, obj_pk, obj){
-        if(action=="delete"){
-            if(view.pk_list.has(obj_pk){
-                view.pk_list.delete(obj_pk);
-                delete view.vue_map[obj_pk];
-                remove_from_list(view.vue_list,this.pk,obj_pk);
-            }
-        }else{
-            let resort = false;
-            if(action=="update"){
-                if(view.pk_list.has(obj_pk){
-                    const ref = view.vue_map[obj_pk];
-                    for(let [k,v] of Object.entries(obj){
-                        ref[k] = v;
-                    }
-                    resort = true; // could be made smarter
-                }else{
-                    action = "insert";
-                }
-            }
-            if(action=="insert" && view.filter_meth(obj)){
-                const clone = deepCloneObject(obj);
-                view.pk_list.add(obj_pk);
-                view.vue_map[obj_pk] = clone
-                view.vue_list.push(clone);
-                resort = true;
-            }
-            if(resort){
-                view.vue_list = view.vue_list.sort(view.sort_meth);
-            }
-        }
     }
 
     //-- Core Methods --------------------------------------------------------//
@@ -224,9 +240,11 @@ class ObjectTracker {
     }
 
     upsert(obj){
+        if(this._track_filter!=null && !this._track_filter(obj){
+            return; }
+
         const pk = obj[this.pk];
         const has = this._obj_by_pk.has(pk);
-
         this._obj_by_pk.set(pk,obj);
 
         if(has){
@@ -288,9 +306,5 @@ function example(){
     // In this case we probably want another method, say a "data-focus"
     // We also have to make sure the machinary works for this being null
 }
-
-
-
-
 
 
