@@ -3,6 +3,84 @@
 In this document I'm going to sketch out ideas related to data management.
 */
 
+/*
+Initial comments.
+
+This is for systems that need to use groups of data.
+Let's outline where this data may come from and how.
+
+* source
+    * be locally static and stored
+    * be locally generated
+    * be on a server and streamed over a socket
+    * be on a server and fetched via GET/POST
+* nature
+    * (socket)      all the relevant remote data deltas are pushed
+    * (fetch/rpc)   all the relevant remote data is pulled at once
+    * (fetch/rpc)   data is too large, and thus fetched with filters
+                    and/or pagination via a sort
+
+So we want to make sure the patterns we build handle these cases.
+
+
+What problem are we trying to solve?
+
+* Centralizing and Standardizing object set interface
+    * handle the following kinds of data sync
+        * stream of per object updates
+        * syncing whole lists of object returned from a query
+* We want to be able to access the objects as plain objects
+    * To do non UI things
+    * To use vanilla js to sync parts of the interface to the data
+* We potentially want to only explose `Object.freeze` wrapped lists
+    * this improves performance on many objects in some cases and doesn't
+      impact of dom update that much in practice
+    * can reduce copies of tracked objects
+* We want to make available as "views" reactive lists of the objects based on:
+    * filter criteria
+    * sorting criteria
+    * pagination critera
+    * provide a reactive interface to update the view criteria
+* We want a mechanism to inform "listners" of events on objects
+
+Different ingest pathways/store:
+
+    obj => ingest
+        obj => vue reference
+
+    // Note the Map[pk] is reactive here?
+    obj => ingest
+        obj => Map(pk:obj)
+        obj => reactive_obj
+
+    obj => ingest
+        obj => Map(pk:obj)
+        obj => clone() => reactive_obj
+
+    // Issue here, we freeze the Map one because it's the same
+    // but may that's ok?
+    obj => ingest
+        obj => Map
+        obj => Object.freeze(obj) => reactive_obj
+        // above is also probably equivilant to:
+        obj => Object.freeze(obj)
+            => fobj
+                fobj => Map
+                fpbj => reactive_obj
+
+For the different ingest pathways, its worth then thinking about
+how the different:
+
+* update and deletion patterns
+* usage patterns for:
+    * vanilla analysis
+    * vanilla UI
+    * vue UI
+
+Would work with each of the above pathways/stores
+
+*/
+
 // Version 1 ///////////////////////////////////////////////////////////
 
 /*
@@ -148,23 +226,41 @@ class ObjectView {
         this.sort_meth = sort_meth;
 
         this.pk = pk;
-        this.pk_list = new Set();      //: Arguably redundant since we could use map to check
-        this.vue_map = reactive({});
-        this.vue_list = reactive([]);
+        this.pk_list = new Set();
+        this.vue_obj = reactive({
+            map: {},
+            list: []
+        });
+    }
+
+    clear(){
+        this.pk_list.clear();
+
     }
 
     update(action, obj_pk, obj){
         if(action=="delete"){
             if(this.pk_list.has(obj_pk){
                 this.pk_list.delete(obj_pk);
-                delete this.vue_map[obj_pk];
-                remove_from_list(this.vue_list,this.pk,obj_pk);
+                delete this.vue_obj.map[obj_pk];
+                remove_from_list(this.vue_obj.list,this.pk,obj_pk);
             }
         }else{
             let resort = false;
+            /*
+            Note here this section the issue of reusing objects
+            and the generation of deeply reactive objects is clear.
+
+            Where are getting the `obj` from?
+            Note that if we just add it to ...
+            well now in vue3 a proxy is used, so does anything happen to the
+            original plain object? I think in Vue2 it would get getters and setters
+            added to it, but that aside, in vue3 we may just generate a proxied copy?
+            or maybe the proxy points to it?
+            */
             if(action=="update"){
                 if(this.pk_list.has(obj_pk){
-                    const ref = this.vue_map[obj_pk];
+                    const ref = this.vue_obj.map[obj_pk];
                     for(let [k,v] of Object.entries(obj){
                         ref[k] = v;
                     }
@@ -176,12 +272,12 @@ class ObjectView {
             if(action=="insert" && this.filter_meth(obj)){
                 const clone = deepCloneObject(obj);
                 this.pk_list.add(obj_pk);
-                this.vue_map[obj_pk] = clone
-                this.vue_list.push(clone);
+                this.vue_obj.map[obj_pk] = clone
+                this.vue_obj.list.push(clone);
                 resort = true;
             }
             if(resort){
-                this.vue_list = this.vue_list.sort(this.sort_meth);
+                this.vue_obj.list = this.vue_obj.list.sort(this.sort_meth);
             }
         }
     }
@@ -205,6 +301,16 @@ class ObjectTracker {
         });
 
         this.data_views = {};
+    }
+
+    // basically clear all data and state
+    clear_all(){
+        this._obj_by_pk.clear();
+        this._vue_obj.list = [];
+        this._vue_obj.map = {};
+        for(let view in Object.values(this.data_views)){
+            view.clear();
+        }
     }
 
     //-- Data Views ----------------------------------------------------------//
