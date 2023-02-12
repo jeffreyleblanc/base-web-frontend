@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <title>Javascript Function Arguments (IN PROGRESS)</title>
+</head>
+<body>
+<main id='main'></main>
+<script>
+
+/*
+This page lays out common function parameter patterns.
+See links for more details and examples
+
+* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments
+* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Default_parameters
+* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
+* https://javascript.info/rest-parameters-spread
+*/
+
+'use strict';
+const main_el = document.getElementById('main');
+function el_log(){
+    const el = document.createElement('div');
+    el.innerText = Array.from(arguments).map(e=>JSON.stringify(e)).join(' ');
+    main_el.appendChild(el);
+}
+function TITLE(){
+    console.log(...arguments);
+    el_log(...arguments);
+}
+function log(){
+    console.log(...arguments);
+    el_log(...arguments);
+}
+
+function list_destructuring(){
+    TITLE('# LIST DESTRUCTURING');
+
+    const [a,b] = [1,2];
+    log(a,b)
+    //> 1, 2
+
+    const [c,d,...rest] = [1,2,3,4];
+    log(c,d,rest)
+    //> 1, 2, [3,4]
+
+    const [i,j,k] = ['I','J'];
+    log(i,j,k)
+    //> 'I', 'J', undefined
+
+    const [l,,n] = ['L','M','N'];
+    log(l,n)
+    //> 'L', 'N'
+
+    const [x=1,y=2,z=3] = ['X!','Z!'];
+    log(x,y,z)
+    //> 'X!', 'Z!', 3
+
+    for(let [i,j] of [[0,1],[2,3],[9,10],[1],[]]){
+        log('i,j',i,j);
+    }
+
+    TITLE('swapping using destructuring')
+    let A = 'A';
+    let B = 'B';
+    [A, B] = [B, A];
+    log('A>',A); //> 'B'
+    log('A>',B); //> 'A'
+}
+list_destructuring();
+
+function object_destructuring(){
+    TITLE('# OBJECT DESTRUCTURING')
+
+    const {a,b} = {a:1,b:2};
+    log(a,b)
+    //> 1, 2
+
+    const {c,d} = {c_:1,d:2};
+    log(c,d)
+    //> undefined, 2
+
+    const {f,e} = {e:1,f:2};
+    log(e,f)
+    //> 1, 2
+
+    const {g,h,...other} = {g:1,h:2,a:3,b:4};
+    log(g,h,other)
+    //> 1, 2, {a:3,b:4}
+
+    const {i,j,k} = {i:'I',j:'J'};
+    log(i,j,k)
+    //> 'I', 'J', undefined
+
+    const {x=1,y=2,z=3} = {x:'X!',z:'Z!'};
+    log(x,y,z)
+    //> 'X!', 2, 'Z!'
+
+    let aa,bb;
+    // The following will not work:
+    // {aa,bb} = {aa:'AA',bb:'BB'}
+    // For such reassignment cases, use parentheses:
+    ({aa,bb} = {aa:'AA',bb:'BB'});
+    log(aa,bb);
+    //> 'AA', 'BB'
+    ({aa,bb} = {aa:'AA2',bb:'BB2'});
+    log(aa,bb)
+    //> 'AA2', 'BB2'
+
+    for(let {k,v} of [{k:0,v:1},{k:2,v:3},{k:4},{v:5,z:12},{}]){
+        log('k,v',k,v);
+    }
+}
+object_destructuring();
+
+function function_arguments(){
+    TITLE('# BASIC ARGUMENTS');
+    function test1(){
+        log('function call:')
+        log('>', arguments);
+        log('>', arguments.length);
+        log('>', arguments[0])
+    }
+    test1();
+    test1('text');
+    test1('text',42);
+    test1(['text',42]);
+    test1(...['text',42]);
+}
+function_arguments();
+
+function default_parameters(){
+    TITLE('# DEFAULT PARAMETERS');
+
+    log('## Basic');
+    function f0(a, b=1){
+        log('f0>',a*b);
+    }
+    f0(5,2);
+    //> 10
+    f0(5);
+    //> 5
+
+    TITLE('## Object default parameters');
+    function f1({a=1, b=2, c=3}={}){
+        log('f1>',a,b,c);
+    }
+    f1();
+    //> 1, 2, 3
+    f1('will-be-ignored');
+    //> 1, 2, 3
+    f1({b:'B'});
+    //> 1, 'B', 3
+
+    TITLE('## Object default parameters 2');
+    function f2(arg1, arg2, {a=1, b=2, c=3}={}){
+        log('f2>',arg1,arg2,a,b,c);
+    }
+    f2();
+    //> undefined, undefined, 1, 2, 3
+    f2(23);
+    //> 23, undefined, 1, 2, 3
+    f2({b:'B'});
+    //> {b:'B'}, undefined, 1, 2, 3
+    f2(23,{b:'B'});
+    //> 23, {b:'B'}, 1, 2, 3
+    f2(23,46,{b:'B'});
+    //> 23, 46, 1, 'B, 3
+
+    TITLE('## Object default parameters 3');
+    function f3(arg1='Y', arg2='Z', opts={}){
+        opts = Object.assign({
+            a:1,
+            b:2,
+            c:3
+        },opts);
+        log('f3>',arg1, arg2, opts);
+    }
+    f3();
+    //> f3> 'Y' 'Z' {a:1,b:2,c:3}
+    f3('A')
+    //> f3> 'A' 'Z' {a:1,b:2,c:3}
+    f3('A','B')
+    //> f3> 'A' 'B' {a:1,b:2,c:3}
+    f3('A','B',{b:'B!'})
+    //> f3> 'A' 'B' {a:1,b:'B!',c:3}
+    f3('A','B',{b:'B!',z:'Z!'})
+    //> f3> 'A' 'B' {a:1,b:'B!',c:3,z:'Z!'}
+
+    TITLE('## Object default parameters 4');
+    function f4(arg1='Y', arg2='Z', opts={}){
+        const {
+            a: a=1,
+            b: b=2,
+            c: c=3
+        } = opts;
+        log('f4>',arg1, arg2, a,b,c);
+    }
+    f4();
+    //> f4> 'Y' 'Z' 1 2 3
+    f4('A')
+    //> f4> 'A' 'Z' 1 2 3
+    f4('A','B')
+    //> f4> 'A' 'B' 1 2 3
+    f4('A','B',{b:'B!'})
+    //> f4> 'A' 'B' 1 'B!' 3
+    f4('A','B',{b:'B!',z:'Z'})
+    //> f4> 'A' 'B' 1 'B!' 3
+}
+default_parameters();
+
+</script>
+</body>
+</html>
