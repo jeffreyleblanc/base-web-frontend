@@ -300,6 +300,80 @@ class ObjectView {
 }
 
 
+class ObjectView2 {
+
+    constructor({
+        pk = undefined,
+        filter_meth = undefined,
+        sort_meth = undefined,
+    }={}){
+        this.filter_meth = filter_meth;
+        this.sort_meth = sort_meth;
+
+        this.pk = pk;
+        this.pk_list = new Set();
+
+        this.vue_list = shallowReactive({
+            list: []
+        });
+        this.vue_map = shallowReactive({});
+    }
+
+    clear(){
+        this.vue_list.list = [];
+        // not super efficient...
+        for(let k of this.pk_list){
+            delete this.vue_map[k]; }
+        this.pk_list.clear();
+    }
+
+    update(action, obj_pk, obj){
+        if(action=="delete"){
+            if(this.pk_list.has(obj_pk){
+                this.pk_list.delete(obj_pk);
+                delete this.vue_map[obj_pk];
+                // eh... not quite right:
+                // remove_from_list(this.vue_obj.list,this.pk,obj_pk);
+            }
+        }else{
+            let resort = false;
+            /*
+            Note here this section the issue of reusing objects
+            and the generation of deeply reactive objects is clear.
+
+            Where are getting the `obj` from?
+            Note that if we just add it to ...
+            well now in vue3 a proxy is used, so does anything happen to the
+            original plain object? I think in Vue2 it would get getters and setters
+            added to it, but that aside, in vue3 we may just generate a proxied copy?
+            or maybe the proxy points to it?
+            */
+            if(action=="update"){
+                if(this.pk_list.has(obj_pk){
+                    const ref = this.vue_obj.map[obj_pk];
+                    for(let [k,v] of Object.entries(obj){
+                        ref[k] = v;
+                    }
+                    resort = true; // could be made smarter
+                }else{
+                    action = "insert";
+                }
+            }
+            if(action=="insert" && this.filter_meth(obj)){
+                const clone = deepCloneObject(obj);
+                this.pk_list.add(obj_pk);
+                this.vue_obj.map[obj_pk] = clone
+                this.vue_obj.list.push(clone);
+                resort = true;
+            }
+            if(resort){
+                this.vue_obj.list = this.vue_obj.list.sort(this.sort_meth);
+            }
+        }
+    }
+}
+
+
 class ObjectTracker {
 
     constructor(kind, pk){
