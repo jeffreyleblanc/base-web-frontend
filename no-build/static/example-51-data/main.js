@@ -1,6 +1,6 @@
 /* Copyright 2022 Jeffrey LeBlanc */
 
-import { createApp, reactive, shallowReactive } from 'vue'
+import { createApp, reactive, shallowReactive, watchEffect, watch } from 'vue'
 
 export default function main(){
 
@@ -16,6 +16,22 @@ export default function main(){
         c: [ 1,2,3,4]
     });
 
+    watchEffect(()=>{
+        console.log("robj.a changed to:",robj.a);
+    });
+    watchEffect(()=>{
+        console.log("robj changed to:",robj);
+    });
+    watch(
+        ()=>robj,
+        (a,b)=>{ console.log("jjj",a,b) },
+        { deep: true }
+    );
+
+    window.setTimeout(()=>{
+        console.log("=== trigger update ===");
+        robj.a = "UPDATED!"
+    },1000);
 
     const app = createApp({
         template: `
