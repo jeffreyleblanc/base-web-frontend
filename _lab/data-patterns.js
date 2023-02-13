@@ -113,6 +113,84 @@ class ObjectTracker {
     }
 }
 
+
+
+// Version 3 ///////////////////////////////////////////////////////////
+
+/*
+This version shows tracking with a reactive vue component as well.
+Note this version makes the entirety of the vue objects reactive.
+THIS USES SHALLOW REACTIVE
+*/
+
+import {shallowReactive} from "vue"
+import {deepCloneObject} from "~/core/tools"
+
+class ObjectTracker {
+
+    constructor(kind, pk){
+        this.kind = kind;
+        this.pk = pk;
+
+        this._obj_by_pk = new Map();
+        this._obj_list = [];
+
+        this._vue_list = shallowReactive({
+            list: []
+        });
+        this._vue_map = shallowReactive({});
+    }
+
+    get(obj_pk){
+        return this._obj_by_pk.get(obj_pk)||null;
+    }
+
+    has(obj_pk){
+        return this._obj_by_pk.has(obj_pk);
+    }
+
+    // need a bulk set
+
+    upsert(obj){
+        const pk = obj[this.pk];
+        const has = this._obj_by_pk.has(pk);
+
+        // Update vanilla using the direct set method
+        this._obj_by_pk.set(pk,obj);
+        if(!has){
+            this._obj_list.push(obj); }
+
+        // Update vue system
+        // Do we even need to duplicate the list?
+        // Can we "reassign it by removing and then adding back?
+        // But the issue is it is a different list then...
+        // Maybe there is a manual trigger we can use?
+        // something like `triggerRef`, if we use a ref instead?
+        this._vue_list.list = this._obj_list.slice();
+        this._vue_map[pk] = obj
+    }
+
+    delete(obj_pk){
+        const had = this._obj_by_pk.delete(obj_pk);
+        if(had){
+            const idx = this._obj_list.findIndex(e=>e[this.pk]==obj_pk);
+            if(idx > -1){
+                this._obj_list.splice(idx,1); }
+        }
+
+        if(had){
+            this._vue_list.list = this._obj_list.slice();
+            delete this._vue_map[obj_pk];
+        }
+    }
+
+    *yield_all(){
+        for(let obj of this._obj_by_pk.values()){
+            yield obj;
+        }
+    }
+}
+
 // Version 3 /////////////////////////////////////////////////////////////////////////////
 
 /*
