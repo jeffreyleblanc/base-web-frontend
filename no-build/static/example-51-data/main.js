@@ -4,6 +4,36 @@ import { createApp, reactive, shallowReactive, watchEffect, watch } from 'vue'
 
 export default function main(){
 
+    // Other ideas
+
+    const TT = {};
+
+    TT.raw = [{i:1},{i:2},{i:3}];
+    // won't work TT.freeze = Object.freeze(TT.raw);
+    TT.freeze = Object.freeze(TT.raw.slice())
+
+
+    TT.raw.push("L")
+    // 4
+    TT.freeze
+    // (3) [{…}, {…}, {…}]
+    TT.freeze[0]
+    // {i: 1}
+    TT.freeze[0].j = 45
+    // 45
+    TT.freeze[0]
+    // {i: 1, j: 45}
+    TT.raw[0]
+    // {i: 1, j: 45}
+    // will trigger an error: G.TT.freeze.push("yak")
+
+
+    // https://vuejs.org/api/reactivity-core.html
+    // https://vuejs.org/api/reactivity-utilities.html
+    // https://vuejs.org/api/reactivity-advanced.html
+    // Questions:
+    // * any issues using watchers outside of a component
+    //   ( one thing is we probably want to manually stop them )
 
     const robj = reactive({
         a: 1,
@@ -24,14 +54,23 @@ export default function main(){
     });
     watch(
         ()=>robj,
-        (a,b)=>{ console.log("jjj",a,b) },
+        (a,b,c,d)=>{ console.log("jjj",a,b,c,d) },
         { deep: true }
     );
-
+    watch(
+        robj,
+        (a,b,c,d)=>{ console.log("mmm",a,b,c,d) },
+        { deep: true }
+    );
     window.setTimeout(()=>{
-        console.log("=== trigger update ===");
+        console.log("=== trigger update 3 ===");
         robj.a = "UPDATED!"
     },1000);
+
+    window.setTimeout(()=>{
+        console.log("=== trigger update 2  ===");
+        robj.c.push("yak");
+    },2000);
 
     const app = createApp({
         template: `
@@ -56,6 +95,7 @@ export default function main(){
     window.G = {
         app,
         robj,
-        srobj
+        srobj,
+        TT
     };
 }
