@@ -313,6 +313,7 @@ class ObjectView2 {
         this.pk = pk;
         this.pk_list = new Set();
 
+        // this could be a shallowRef instead
         this.vue_list = shallowReactive({
             list: []
         });
@@ -322,6 +323,22 @@ class ObjectView2 {
     clear(){
         this.vue_list.list = [];
         // not super efficient...
+        // is there a pattern or a manual vue method that can let us
+        // replace this object with a new one in such a way that all
+        // subscribers are transparently updated and we don't break
+        // the reactivity connections/bindings?
+        // this is where using Object.freeze could be better, because
+        // we can fully replace the object...
+        // If we want to replace/update a frozen object efficiently I wonder if
+        // Object.freeze({ new_key: value, ...frozen_obj }) or
+        // Object.freeze(Object.assign({new_key:value},frozen_obj));
+        // Could be efficient?
+        // The bigger truth is we probably just want to track a couple objects
+        // directly, and we can maintain a much smaller set of mappings
+        // that depend on what components are specifically targeting
+        // possibly using a components onCreate or onUpdate methods are where
+        // we can signal a global store that we want to start directly tracking
+        // (or stop tracking) a specific object
         for(let k of this.pk_list){
             delete this.vue_map[k]; }
         this.pk_list.clear();
