@@ -139,6 +139,8 @@ class ObjectTracker {
             list: []
         });
         this._vue_map = shallowReactive({});
+
+        this._listeners = [];
     }
 
     get(obj_pk){
@@ -153,12 +155,25 @@ class ObjectTracker {
 
     upsert(obj){
         const pk = obj[this.pk];
-        const has = this._obj_by_pk.has(pk);
+        const curr = this._obj_by_pk.get(pk);
+        const has = ( curr!=null );
 
         // Update vanilla using the direct set method
         this._obj_by_pk.set(pk,obj);
         if(!has){
-            this._obj_list.push(obj); }
+            this._obj_list.push(obj);
+            this._listeners.forEach(l=>l.on_add(this.kind,obj));
+        }else{
+            if(this._listeners.size()>0){
+                const diff = {};
+                for(let [k,v] of Object.entries(curr){
+                    if(obj[k]!=v){
+                        diff[k] = obj[k];
+                    }
+                }
+                this._listener.forEach(l=>l.on_update(this.kind,diff,obj);
+            }
+        }
 
         // Update vue system
         // Do we even need to duplicate the list?
@@ -176,6 +191,7 @@ class ObjectTracker {
             const idx = this._obj_list.findIndex(e=>e[this.pk]==obj_pk);
             if(idx > -1){
                 this._obj_list.splice(idx,1); }
+            this._listener.forEach(l=>l.on_delete(this.kind,pk);
         }
 
         if(had){
