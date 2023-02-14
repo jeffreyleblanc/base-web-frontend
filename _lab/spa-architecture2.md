@@ -41,9 +41,52 @@ path = /c/:id
     push cycle:
         fetch /c/:id => resp
         store.c[id] = resp
+        fetch /o/?c_id=id => resp
+        resp.forEach(e => store.o[e.id] = o)
 path = /o/:id
     pop cycle
     push cycle
         fetch /o/:id => resp
         store.o[id] = resp
 ```
+
+So what would be ideal is a universal trigger on any path change so
+we can setup/teardown data and update cycles
+
+within a component we can do something like:
+
+```javascript
+{
+    computed: {
+        id(){ return this.$route.params.id; },
+        obj(){ return this.$G.store.objects[this.id]; }
+    }
+}
+```
+
+Though we should test/consider issues raised by <https://router.vuejs.org/guide/essentials/dynamic-matching.html#reacting-to-params-changes>
+
+Note we can also use an alias to easily make `/` and `/c/` map to the same place <https://router.vuejs.org/guide/essentials/redirect-and-alias.html#alias>
+
+Also use the props pattern <https://router.vuejs.org/guide/essentials/passing-props.html> as a cleaner way than the computed pattern above. Still worth checking what happens on same path updating just :id.
+
+Now we can apply global guards which is probably better than per route guards in this use case:
+
+```javascript
+const router = createRouter({ ... })
+
+router.beforeEach((to, from) => {
+  // ...
+  // explicitly return false to cancel the navigation
+  return false
+});
+```
+
+from <https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards>
+
+Also see <https://router.vuejs.org/guide/advanced/navigation-guards.html#the-full-navigation-resolution-flow>
+
+Note also their recommended data fetching method using life cycle hooks in the components: <https://router.vuejs.org/guide/advanced/data-fetching.html>. This looks like it will work less well for our pattern, as we want more centralized control."
+
+
+
