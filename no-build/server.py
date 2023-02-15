@@ -19,8 +19,13 @@ class BaseHandler(tornado.web.RequestHandler):
 
 class MainHandler(BaseHandler):
     def get(self, number):
-        template_name = f"index{number}.html"
-        self.render(template_name)
+        example = self.application.example_dir[number]
+        dpath = example["path"]/"dependencies.html"
+        dependencies = dpath.read_text()
+        self.render("index.html",
+            dependencies= dependencies,
+            example_name= example["name"]
+        )
 
 class APIHandler(BaseHandler):
     def post(self):
@@ -64,7 +69,12 @@ class MyApp(tornado.web.Application):
         self.example_dir = {}
         for p in self.static_dir.iterdir():
             if p.is_dir() and p.name != "_lib":
-                self.example_dir[p.name] = p
+                nid = p.name.split('-')[0]
+                self.example_dir[nid] = {
+                    "name": p.name,
+                    "nid": nid,
+                    "path": p
+                }
 
 
 async def main():
