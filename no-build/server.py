@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-# Copyright Jeffrey LeBlanc, 2022. MIT License.
+# Copyright Jeffrey LeBlanc, 2023. MIT License.
 
 # Python
 from pathlib import Path
@@ -28,26 +28,43 @@ class APIHandler(BaseHandler):
         print('DATA!',data)
         self.write_json({'status':'OK'})
 
+class InternalReloadExamplesHandler(BaseHandler):
+    def get(self):
+        self.application.load_example_dir()
+
 class MyApp(tornado.web.Application):
 
     def __init__(self):
-        here = Path(__file__).parent
-        static_dir = here / 'static'
-        template_dir = here /'templates'
+        self.parent_dir = Path(__file__).parent
+        self.static_dir = self.parent_dir / "static"
+        self.template_dir = self.parent_dir /"templates"
+
+        # Collect the example directories
+        self.example_dir = {}
+        self.load_example_dir()
+        print(self.example_dir)
 
         # Settings
         settings = dict(
-            static_path= static_dir,
-            template_path= template_dir,
+            static_path= self.static_dir,
+            template_path= self.template_dir,
             autoreload= True,
             debug= True
         )
 
         handlers = [
-            (r"^/example/(?P<number>\d+)/?$", MainHandler)
+            (r"^/example/(?P<number>\d+)/?$", MainHandler),
+            (r"^/reload/?$", InternalReloadExamplesHandler)
         ]
 
         super().__init__(handlers,**settings)
+
+    def load_example_dir(self):
+        print("Loading the examples")
+        self.example_dir = {}
+        for p in self.static_dir.iterdir():
+            if p.is_dir() and p.name != "_lib":
+                self.example_dir[p.name] = p
 
 
 async def main():
