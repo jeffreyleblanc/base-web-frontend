@@ -9,5 +9,5 @@ export default function main(){
             message: 'Hello World!'
         }},
     });
-    app.mount('#app');
+    app.mount('#mount');
 }

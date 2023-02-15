@@ -14,6 +14,15 @@
 
 <body>
     <div id="mount"></div>
+    {% if kind=="global" %}
     <script type="module" src="/static/{{example_name}}/main.js"></script>
+    {% elif kind=="esm" %}
+    <script type="module">
+        import main from "/static/{{example_name}}/main.js"
+        main();
+    </script>
+    {% else %}
+    <div>ERROR: unknown script kind</div>
+    {% end %}
 </body>
 </html>

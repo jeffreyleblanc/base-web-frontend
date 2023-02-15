@@ -24,7 +24,8 @@ class MainHandler(BaseHandler):
         dependencies = dpath.read_text()
         self.render("index.html",
             dependencies= dependencies,
-            example_name= example["name"]
+            example_name= example["name"],
+            kind= example["kind"]
         )
 
 class APIHandler(BaseHandler):
@@ -69,10 +70,11 @@ class MyApp(tornado.web.Application):
         self.example_dir = {}
         for p in self.static_dir.iterdir():
             if p.is_dir() and p.name != "_lib":
-                nid = p.name.split('-')[0]
+                nid,kind = p.name.split('-')[:2]
                 self.example_dir[nid] = {
                     "name": p.name,
                     "nid": nid,
+                    "kind": kind,
                     "path": p
                 }
 

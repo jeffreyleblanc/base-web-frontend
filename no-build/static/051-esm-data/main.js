@@ -89,7 +89,7 @@ export default function main(){
             srobj_json(){ return JSON.stringify(this.srobj); }
         }
     });
-    app.mount('#app');
+    app.mount('#mount');
 
     // Export stuff
     window.G = {
