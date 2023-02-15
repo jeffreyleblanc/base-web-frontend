@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>No Build Examples</title>
+    <meta name="description" content="No Build Example">
+    <meta name="author" content="jleblanc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="/static/_lib/tailwindcss.3.2.4.js"></script>
+
+</head>
+<body class="p-8">
+    <h1>Examples:</h1>
+    <section class="mt-8 flex flex-col gap-y-4">
+        {% for e in examples %}
+        <a class="text-blue-600 cursor-pointer" href="/example/{{e[0]}}/">
+            {{e[1]}}
+        </a>
+        {% end %}
+    </section>
+</body>
+</html>

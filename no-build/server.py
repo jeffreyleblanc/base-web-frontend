@@ -11,13 +11,19 @@ import tornado.web
 
 
 class BaseHandler(tornado.web.RequestHandler):
-
     def write_json(self, obj, indent=None):
         self.set_header("Content-Type", "application/json")
         s = json.dumps(obj,indent=indent)
         self.write(s)
 
 class MainHandler(BaseHandler):
+    def get(self):
+        examples = self.application.example_dir
+        lst = [(n,e["name"]) for n,e in self.application.example_dir.items()]
+        lst.sort(key = lambda e: e[0])
+        self.render("main.html",examples=lst)
+
+class ExampleHandler(BaseHandler):
     def get(self, number):
         example = self.application.example_dir[number]
         dpath = example["path"]/"dependencies.html"
@@ -59,7 +65,8 @@ class MyApp(tornado.web.Application):
         )
 
         handlers = [
-            (r"^/example/(?P<number>\d+)/?$", MainHandler),
+            (r"^/?$", MainHandler),
+            (r"^/example/(?P<number>\d+)/?$", ExampleHandler),
             (r"^/reload/?$", InternalReloadExamplesHandler)
         ]
 
