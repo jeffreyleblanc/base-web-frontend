@@ -10,8 +10,6 @@ import MainPage from "./MainPage.js"
 import StatusPage from "./StatusPage.js"
 import CollectionPage from "./CollectionPage.js"
 import ItemPage from "./ItemPage.js"
-import NotFoundPage from "./NotFoundPage.js"
-import NotFoundObject from "./NotFoundObject.js"
 import {generate_data} from "./data.js"
 
 function fake_fetch(url, handler){
@@ -46,8 +44,6 @@ export default function main(){
     const pathbase = "/"; // "/example/91/";
     const routes = [
         {
-            name: "404", path: '/:pathMatch(.*)*', component: NotFoundPage
-        },{
             name: "main", path: pathbase, component: MainPage
         },{
             name: "status",
@@ -57,24 +53,10 @@ export default function main(){
             name: "collection",
             path: pathbase+"collection/:id",
             component: CollectionPage,
-            /* beforeEnter: (to, from)=>{
-                console.log("collection beforeEnter");
-                return (G.data.has_collection(to.params.id))?
-                    true : { name: "notfound", params: { name: "collection", id: to.params.id } };
-            }*/
         },{
             name: "item",
             path: pathbase+"item/:id",
             component: ItemPage,
-            /*beforeEnter: (to, from)=>{
-                console.log("item beforeEnter");
-                return (G.data.has_item(to.params.id))?
-                    true : { name: "notfound", params: { name: "item", id: to.params.id } };
-            }*/
-        },{
-            name: "notfound",
-            path: pathbase+"/notfound/:name/:id",
-            component: NotFoundObject
         }
     ];
 
@@ -86,11 +68,6 @@ export default function main(){
 
     router.beforeEach((to,from)=>{
         console.log("beforeEach");
-        // console.log("to:",to);
-        // console.log("from:",from);
-
-        // console.log("to.name",to.name);
-        // console.log("from.name",from.name);
         if("collection" == to.name){
             console.log(">>",to.params);
             if(G.data.has_collection(to.params.id)){
@@ -98,7 +75,6 @@ export default function main(){
             }else{
 
             }
-            //        true : { name: "notfound", params: { name: "collection", id: to.params.id } };
         }
         else if("item" == to.name){
             console.log(">>",to.params);
@@ -107,7 +83,6 @@ export default function main(){
             }else{
 
             }
-            // true : { name: "notfound", params: { name: "item", id: to.params.id } };
         }
     });
 
