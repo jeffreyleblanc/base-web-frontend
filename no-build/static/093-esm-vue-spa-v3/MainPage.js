@@ -19,7 +19,7 @@ export default {
     template,
     data(){ return {} },
     computed: {
-        collections(){ return this.$G.store.collections; }
+        collections(){ return this.$G.data.collection_list(); }
     }
 };
 

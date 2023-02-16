@@ -52,17 +52,17 @@ export default function main(){
         if("collection" == to.name){
             console.log(">>",to.params);
             if(G.data.has_collection(to.params.id)){
-
+                console.log("has collection");
             }else{
-
+                console.log("no collection");
             }
         }
         else if("item" == to.name){
             console.log(">>",to.params);
             if(G.data.has_item(to.params.id)){
-
+                console.log("has item");
             }else{
-
+                console.log("no item");
             }
         }
     });

@@ -26,14 +26,10 @@ export default {
     props: [ "id" ],
     computed: {
         collection(){
-            for(let c of this.$G.store.collections){
-                if(c.id == this.id){
-                    return c; }
-            }
-            return null;
+            return this.$G.store.collection_map[this.id]||null;
         },
         items(){
-            return this.$G.store.items.filter(i=>i.collection_id==this.id);
+            return this.$G.data.items_in_collection(this.id);
         }
     }
 };

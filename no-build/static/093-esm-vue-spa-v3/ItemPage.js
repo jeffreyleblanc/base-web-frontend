@@ -24,11 +24,7 @@ export default {
     props: [ "id" ],
     computed: {
         item(){
-            for(let item of this.$G.store.items){
-                if(item.id == this.id){
-                    return item; }
-            }
-            return null;
+            return this.$G.store.item_map[this.id]||null;
         }
     }
 };

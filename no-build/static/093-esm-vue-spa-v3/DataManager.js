@@ -8,30 +8,49 @@ export default class DataManager {
     constructor(store_seed={}){
         this.store = reactive({
             ...store_seed,
-            collections: [],
-            items: []
+            collection_map: {},
+            item_map: {}
         });
     }
+
+    //-- Server Interface -----------------------------------//
 
     fetch_data(){
         fake_fetch("/get/",(data)=>{
-            this.store.collections = data.collections;
-            this.store.items = data.items;
+            this.store.collection_map = data.collections.reduce((obj,e)=>{
+                obj[e.id] = e; return obj;
+            },{});
+            this.store.item_map = data.items.reduce((obj,e)=>{
+                obj[e.id] = e; return obj;
+            },{});
         });
     }
 
+    //-- Collection Methods ---------------------------------//
+
     has_collection(id){
-        for(let c of this.store.collections){
-            if(c.id == id){ return true; }
-        }
-        return false;
+        return this.store.collection_map[id]!==undefined;
     }
 
+    // We need to review the reactivity implications of this:
+    collection_list(){
+        return Object.values(this.store.collection_map);
+    }
+
+    //-- Item Methods ---------------------------------------//
+
     has_item(id){
-        for(let c of this.store.items){
-            if(c.id == id){ return true; }
+        return this.store.item_map[id]!==undefined;
+    }
+
+    // May be a better method here. Also check on reactivity
+    items_in_collection(cid){
+        const lst = [];
+        for(let item of Object.values(this.store.item_map)){
+            if(item.collection_id==cid){
+                lst.push(item); }
         }
-        return false;
+        return lst;
     }
 }
 
