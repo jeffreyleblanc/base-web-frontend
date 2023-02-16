@@ -10,20 +10,16 @@ import MainPage from "./MainPage.js"
 import StatusPage from "./StatusPage.js"
 import CollectionPage from "./CollectionPage.js"
 import ItemPage from "./ItemPage.js"
-import {fake_fetch,generate_data} from "./data.js"
 
 
 export default function main(){
     console.log("Running Main!");
 
     // Make the data manager and global store
-    G.store = reactive({
-        user: "bob",
-        collections: [],
-        items: []
+    G.data = new DataManager({
+        user: "bill"
     });
-    G.data = new DataManager(G.store);
-
+    G.store = G.data.store;
 
     // Set up the routes
     const routes = [
@@ -83,10 +79,7 @@ export default function main(){
     window.G = G;
 
     // Kick of the system
-    fake_fetch("/get/",(data)=>{
-        G.store.collections = data.collections;
-        G.store.items = data.items;
-    });
+    G.data.fetch_data();
 }
 
 
