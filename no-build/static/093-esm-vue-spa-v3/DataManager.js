@@ -26,6 +26,18 @@ export default class DataManager {
         });
     }
 
+    set_cycle({name="",id=null}={}){
+        if("collections"==name){
+            console.log("trigger",name);
+        }
+        else if("collection"==name){
+            console.log("trigger",name,id);
+        }
+        else if("item"==name){
+            console.log("trigger",name,id);
+        }
+    }
+
     //-- Collection Methods ---------------------------------//
 
     has_collection(id){
