@@ -5,7 +5,7 @@ import {createRouter,createWebHistory,createWebHashHistory} from "vuerouter"
 
 import {G} from "./global.js"
 import DataManager from "./DataManager.js"
-import MainToolbar from "./MainToolbar.js"
+import MainApp from "./MainApp.js"
 import MainPage from "./MainPage.js"
 import StatusPage from "./StatusPage.js"
 import CollectionPage from "./CollectionPage.js"
@@ -72,20 +72,7 @@ export default function main(){
     });
 
     // Create the main app
-    const template = `
-    <div class="flex flex-col">
-        <MainToolbar/>
-        <main class="p-4 flex flex-col gap-y-4">
-            <router-view></router-view>
-        </main>
-    <div>`;
-    G.V = createApp({
-        template,
-        components: { MainToolbar, MainPage, StatusPage },
-        data(){ return {} },
-    });
-
-    // Attach the global store
+    G.V = createApp(MainApp);
     G.V.use(G);
     G.V.use(router);
 
