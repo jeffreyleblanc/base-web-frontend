@@ -1,6 +1,6 @@
 /* Copyright Jeffrey LeBlanc */
 
-import {reactive,createApp} from "vue"
+import {createApp} from "vue"
 import {createRouter,createWebHistory,createWebHashHistory} from "vuerouter"
 
 import {G} from "./global.js"
@@ -62,12 +62,12 @@ export default function main(){
     });
 
     // Create the main app
-    G.V = createApp(MainApp);
-    G.V.use(G);
-    G.V.use(router);
+    G.app = createApp(MainApp);
+    G.app.use(G);
+    G.app.use(router);
 
     // Mount and export
-    G.V.mount('#mount');
+    G.app.mount('#mount');
 
     // Export to window for debugging
     window.G = G;
