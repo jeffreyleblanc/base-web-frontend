@@ -10,17 +10,7 @@ import MainPage from "./MainPage.js"
 import StatusPage from "./StatusPage.js"
 import CollectionPage from "./CollectionPage.js"
 import ItemPage from "./ItemPage.js"
-import {generate_data} from "./data.js"
-
-function fake_fetch(url, handler){
-    if("/get/"==url){
-        window.setTimeout(()=>{
-            console.log("PING!");
-            const data = generate_data();
-            handler(data);
-        },500);
-    }
-}
+import {fake_fetch,generate_data} from "./data.js"
 
 
 export default function main(){
@@ -34,40 +24,33 @@ export default function main(){
     });
     G.data = new DataManager(G.store);
 
-    fake_fetch("/get/",(data)=>{
-        G.store.collections = data.collections;
-        G.store.items = data.items;
-    });
 
-    // In theory `base: "/example/91/" could be an option to createRouter
-    // but that might be an old option, and doesn't seem to work
-    const pathbase = "/"; // "/example/91/";
+    // Set up the routes
     const routes = [
         {
-            name: "main", path: pathbase, component: MainPage
+            name: "main", path: "/", component: MainPage
         },{
             name: "status",
-            path: pathbase+"status",
+            path: "/status",
             component: StatusPage
         },{
             name: "collection",
-            path: pathbase+"collection/:id",
+            path: "/collection/:id",
             component: CollectionPage,
             props: true
         },{
             name: "item",
-            path: pathbase+"item/:id",
+            path: "/item/:id",
             component: ItemPage,
             props: true
         }
     ];
 
+    // Set up our router
     const router = createRouter({
-        // history: createWebHistory(),
         history: createWebHashHistory(),
         routes,
     });
-
     router.beforeEach((to,from)=>{
         console.log("beforeEach");
         if("collection" == to.name){
@@ -111,6 +94,12 @@ export default function main(){
 
     // Export to window for debugging
     window.G = G;
+
+    // Kick of the system
+    fake_fetch("/get/",(data)=>{
+        G.store.collections = data.collections;
+        G.store.items = data.items;
+    });
 }
 
 

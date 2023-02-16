@@ -1,18 +1,5 @@
 
-
-const _base62 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-const _base62_len = _base62.length;
-export function make_base62_id(length=6){
-    let result = '';
-    for(let i=0; i<length; i++){
-        result += _base62.charAt(Math.floor(Math.random()*_base62_len));}
-    return result;
-}
-
-export function utc_timestamp(){
-    const now = new Date();
-    return now.toISOString();
-}
+import {make_base62_id,utc_timestamp} from "./tools.js"
 
 export function generate_data(){
 
@@ -41,5 +28,15 @@ export function generate_data(){
     }
 
     return { collections, items }
+}
+
+export function fake_fetch(url, handler){
+    if("/get/"==url){
+        window.setTimeout(()=>{
+            console.log("PING!");
+            const data = generate_data();
+            handler(data);
+        },500);
+    }
 }
 
