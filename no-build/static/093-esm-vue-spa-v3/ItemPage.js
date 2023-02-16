@@ -21,15 +21,12 @@ const template = `
 export default {
     template,
     data(){ return {} },
+    props: [ "id" ],
     computed: {
-        item_id(){
-            return this.$route.params.id
-        },
         item(){
             for(let item of this.$G.store.items){
-                if(item.id == this.item_id){
-                    return item;
-                }
+                if(item.id == this.id){
+                    return item; }
             }
             return null;
         }

@@ -23,21 +23,17 @@ const template = `
 export default {
     template,
     data(){ return {} },
+    props: [ "id" ],
     computed: {
-        cid(){
-            return this.$route.params.id
-        },
         collection(){
-            let item = null;
             for(let c of this.$G.store.collections){
-                if(c.id == this.cid){
-                    return c;
-                }
+                if(c.id == this.id){
+                    return c; }
             }
             return null;
         },
         items(){
-            return this.$G.store.items.filter(i=>i.collection_id==this.cid);
+            return this.$G.store.items.filter(i=>i.collection_id==this.id);
         }
     }
 };

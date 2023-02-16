@@ -53,10 +53,12 @@ export default function main(){
             name: "collection",
             path: pathbase+"collection/:id",
             component: CollectionPage,
+            props: true
         },{
             name: "item",
             path: pathbase+"item/:id",
             component: ItemPage,
+            props: true
         }
     ];
 
