@@ -81,14 +81,21 @@ export default class DataManager {
             return this.store.item_map[id]!==undefined;
         }
 
-        // May be a better method here. Also check on reactivity
         items_in_collection(cid){
+            // Method 1: Using a chained method
+            return Object.values(this.store.item_map).filter(e=>e.collection_id==cid);
+
+            // Method 2: Iterating over the values
+            // > likely less efficient than above,
+            // > esp since Object.values is not a generator, but returns an actual array.
+            /*
             const lst = [];
             for(let item of Object.values(this.store.item_map)){
                 if(item.collection_id==cid){
                     lst.push(item); }
             }
             return lst;
-        }
+            */
+    }
 }
 
