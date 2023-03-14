@@ -48,7 +48,6 @@ class MyApp(Application):
 
     def __init__(self):
         self.parent_dir = Path(__file__).parent
-        # self.static_dir = self.parent_dir / "static"
         self.template_dir = self.parent_dir /"_templates"
 
         # Collect the example directories
@@ -58,27 +57,19 @@ class MyApp(Application):
 
         # Settings
         settings = dict(
-            # static_path= self.static_dir,
             template_path= self.template_dir,
             autoreload= True,
             debug= True
         )
 
-        _lib = self.parent_dir/"_lib"
-        # print("========")
-        # print(_lib)
-        # print("--------")
-
+        # Build handlers
         handlers = [
             (r"^/?$", MainHandler),
             (r"^/example/(?P<number>\d+)/?$", ExampleHandler),
             (r"^/reload/?$", InternalReloadExamplesHandler),
-            (r"^/static/_lib/(.*)",StaticFileHandler,{"path":_lib})
+            (r"^/static/_lib/(.*)",StaticFileHandler,{"path":self.parent_dir/"_lib"})
         ]
-
         for k,v in self.example_dir.items():
-            print(k)
-            print(v["path"])
             name = v["name"]
             path = f"/static/{name}/(.*)"
             handlers.append((path,StaticFileHandler,{"path":self.parent_dir/name}))
@@ -86,7 +77,6 @@ class MyApp(Application):
         super().__init__(handlers,**settings)
 
     def load_example_dir(self, src_dir):
-        print(f"Loading the examples from: {src_dir}")
         exclude_dir = ("_templates","_lib")
         self.example_dir = {}
         for p in src_dir.iterdir():
