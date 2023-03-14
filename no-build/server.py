@@ -7,10 +7,10 @@ from pathlib import Path
 import asyncio
 import logging
 # Tornado
-import tornado.web
+from tornado.web import RequestHandler, StaticFileHandler, Application
 
 
-class BaseHandler(tornado.web.RequestHandler):
+class BaseHandler(RequestHandler):
     def write_json(self, obj, indent=None):
         self.set_header("Content-Type", "application/json")
         s = json.dumps(obj,indent=indent)
@@ -44,39 +44,53 @@ class InternalReloadExamplesHandler(BaseHandler):
     def get(self):
         self.application.load_example_dir()
 
-class MyApp(tornado.web.Application):
+class MyApp(Application):
 
     def __init__(self):
         self.parent_dir = Path(__file__).parent
-        self.static_dir = self.parent_dir / "static"
-        self.template_dir = self.parent_dir /"templates"
+        # self.static_dir = self.parent_dir / "static"
+        self.template_dir = self.parent_dir /"_templates"
 
         # Collect the example directories
         self.example_dir = {}
-        self.load_example_dir()
+        self.load_example_dir(self.parent_dir)
         print(self.example_dir)
 
         # Settings
         settings = dict(
-            static_path= self.static_dir,
+            # static_path= self.static_dir,
             template_path= self.template_dir,
             autoreload= True,
             debug= True
         )
 
+        _lib = self.parent_dir/"_lib"
+        # print("========")
+        # print(_lib)
+        # print("--------")
+
         handlers = [
             (r"^/?$", MainHandler),
             (r"^/example/(?P<number>\d+)/?$", ExampleHandler),
-            (r"^/reload/?$", InternalReloadExamplesHandler)
+            (r"^/reload/?$", InternalReloadExamplesHandler),
+            (r"^/static/_lib/(.*)",StaticFileHandler,{"path":_lib})
         ]
+
+        for k,v in self.example_dir.items():
+            print(k)
+            print(v["path"])
+            name = v["name"]
+            path = f"/static/{name}/(.*)"
+            handlers.append((path,StaticFileHandler,{"path":self.parent_dir/name}))
 
         super().__init__(handlers,**settings)
 
-    def load_example_dir(self):
-        print("Loading the examples")
+    def load_example_dir(self, src_dir):
+        print(f"Loading the examples from: {src_dir}")
+        exclude_dir = ("_templates","_lib")
         self.example_dir = {}
-        for p in self.static_dir.iterdir():
-            if p.is_dir() and p.name != "_lib":
+        for p in src_dir.iterdir():
+            if p.is_dir() and p.name not in exclude_dir:
                 nid,kind = p.name.split('-')[:2]
                 self.example_dir[nid] = {
                     "name": p.name,
