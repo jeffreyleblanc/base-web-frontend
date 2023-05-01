@@ -30,7 +30,7 @@ export function helper_meth(){
     console.log('I am a helper');
 }
 
-// main.js
+// src/main.js
 import {helper_meth} from './helper.js';
 async function main(){
     console.log('hello');
@@ -42,7 +42,7 @@ async function main(){
 }
 ```
 
-We can also add a "scripts" to `package.json`:
+We can also add a "scripts" block to `package.json`:
 
 ```json
 {
@@ -58,6 +58,8 @@ We can also add a "scripts" to `package.json`:
 Running and building code:
 
 ```sh
+# Build from script
+$ mkdir -p dist
 $ npm run build
 #> --info--
 $ ls dist/
