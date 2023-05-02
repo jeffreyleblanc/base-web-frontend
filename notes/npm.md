@@ -7,6 +7,11 @@
 * `npm install PKG` in the local project at `./node_modules`
 * `npm install -g PKG` within `/usr/local/...`
 
+Some other `npm install` options:
+
+* `--save-exact`: use exact version numbers
+* TODO: fill in more common options
+
 The basic structure of a project is:
 
 ```sh
