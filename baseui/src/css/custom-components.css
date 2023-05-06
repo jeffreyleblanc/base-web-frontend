@@ -1,0 +1,230 @@
+
+
+@layer components {
+
+    .throw-away-- {}
+
+    /*
+    This is a small set of component classes that encapsulate commonly used patterns.
+    All classes here are prefixed with 'ui-' to make them easily distinguishable from
+    core utility classes.
+    */
+
+    /* -- Structure ------------------------------------------------- */
+
+        /* Use on outermost DOM element for a single page application. */
+        .ui-spa-root {
+            @apply
+                full-screen
+                relative
+                overflow-hidden
+                m-0
+                p-0
+            ;
+        }
+
+        /* Convenience for flex based rows and columns */
+        .ui-row { @apply flex flex-row; }
+        .ui-col { @apply flex flex-col; }
+
+        /* UI pane system with helper method for scrollable expanding children */
+        .ui-parent-col {
+            @apply ui-col items-stretch;
+        }
+        .ui-parent-col > .ui-child-expand {
+            @apply flex-1 min-h-0 overflow-auto;
+        }
+
+        .ui-parent-row {
+            @apply ui-row items-stretch;
+        }
+        .ui-parent-row > .ui-child-expand {
+            @apply flex-1 min-w-0 overflow-auto;
+        }
+        .ui-parent-row > .ui-child-center {
+            /* Use within ui-parent-row */
+            @apply self-center mx-auto;
+        }
+        .ui-parent-row > .ui-child-center-max {
+            @apply object-contain mx-auto ;
+        }
+
+        .ui-parent-stack {
+            @apply relative;
+        }
+        .ui-parent-stack > .ui-child-expand {
+            @apply absolute pin-tl full-size;
+        }
+        .ui-parent-stack > .ui-child-center {
+            @apply absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+        }
+        .ui-parent-stack > .ui-child-center-max {
+            @apply absolute pin-tl full-size object-contain;
+        }
+
+    /* -- UI Tool Helpers ------------------------------------------------- */
+
+        /* Class for a toolbar row */
+        .ui-tool-row {
+            @apply
+                ui-row
+                items-center
+                gap-x-6
+                gap-y-4 /* relevant if wraps */
+                whitespace-nowrap /* prevents text from breaking on compression */
+                flex-wrap
+                /* if wish to clip instead of wrap, add `overflow-x-clip` to element */
+            ;
+        }
+
+        /* Similar to ui-tool-row, but with tighter gap and clips */
+        .ui-tool-group {
+            @apply
+                ui-row
+                items-center
+                gap-x-1
+                whitespace-nowrap /* prevents text from breaking on compression */
+        }
+
+    /* -- Buttons ------------------------------------------------- */
+
+        .ui-button {
+            @apply
+                flex flex-row items-center
+                px-4
+                h-8
+                rounded
+                whitespace-nowrap
+                hover:brightness-95
+                bg-gray-400
+            ;
+        }
+
+        .th-white-on-blue {}
+        .th-white-on-red {}
+
+        .ui-button-blue {
+            @apply ui-button;
+            @apply text-white bg-blue-600;
+        }
+
+        .ui-button-red {
+            @apply ui-button;
+            @apply text-white bg-red-600;
+        }
+
+        .ui-button-slate {
+            @apply ui-button;
+            @apply text-white bg-blue-gray-600;
+        }
+
+        .ui-button-icon {
+            @apply
+                appearance-none
+                sq-8
+            ;
+        }
+
+    /* -- Form Elements ------------------------------------------------- */
+
+        .ui-input-text {
+            @apply
+                appearance-none
+                h-8
+                px-2
+                rounded
+                focus:bg-white
+                focus:blue-ring
+                bg-gray-50
+            ;
+        }
+
+        .ui-input-text-icon-wrapper {
+            /*
+            Example usage ( w-48 and similar are optional ):
+            <span class="ui-input-text-icon-wrapper w-48">
+                <span class="sq-4 text-gray-700">
+                    <icon-search />
+                </span>
+                <input type="text" placeholder="search" />
+                <span class="sq-4 text-gray-700">
+                    <icon-filter/>
+                </span>
+            </span>
+            Note that similar effect can be achieved using a background image
+            but this technique affords much more flexibility
+            */
+
+            @apply
+                flex flex-row items-center gap-2
+                h-8 px-2
+                bg-white rounded
+                focus-within:outline
+                focus-within:blue-ring
+            ;
+        }
+        .ui-input-text-icon-wrapper > input[type=text] {
+            @apply
+                flex-1 min-w-0 /* allow input to take up all remaining space in container and none more */
+                appearance-none
+                focus:outline-none
+            ;
+        }
+
+        .ui-checkbox {
+            @apply
+                form-checkbox /* from tailwind forms utility */
+                rounded
+                focus:blue-ring
+            ;
+        }
+
+        .ui-select {
+            @apply
+                appearance-none
+                bg-gray-50
+                h-8
+                px-2
+                rounded
+                cursor-pointer
+                focus:bg-white
+                focus:blue-ring
+            ;
+
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239e9e9e' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right .5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+    /* -- Dropdown ------------------------------------------------- */
+
+        .ui-dropdown:hover .ui-dropdown-menu {
+            display: block;
+            border-top: 0.25rem solid transparent;
+
+            @apply divide-y divide-gray-300;
+        }
+
+        .ui-dropdown-item {
+            @apply
+                first:rounded-t last:rounded-b bg-gray-50 hover:bg-blue-600 hover:text-white py-2 px-4;
+        }
+
+        .ui-dropdown-menu2 {
+            display: block;
+            border-top: 0.25rem solid transparent;
+
+            @apply divide-y divide-gray-300;
+        }
+
+        .ui-drop-panel {
+            display: block;
+            border-top: 0.25rem solid transparent;
+        }
+
+}

@@ -1,0 +1,13 @@
+/* ./src/index.css */
+/*@tailwind base;
+@tailwind components;
+@tailwind utilities;*/
+
+@import 'tailwindcss/base';
+
+@import 'tailwindcss/components';
+@import './custom-utilities.css';
+
+@import 'tailwindcss/utilities';
+@import './custom-components.css';
+
