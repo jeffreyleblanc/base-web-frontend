@@ -1,5 +1,23 @@
 # Base Web Frontend
 
+## Repository Structure
+
+```sh
+notes/
+    # Reference notes on frontend related topics and tools
+scaffolds/
+    # Scaffold files for common/basic frontend scenarios
+no-build/
+    # Vue3/tailwind scaffolds that don't require a build step
+baseui/
+    # developing ui toolkit based on vue3 and tailwind
+tools/
+    # Collection of tools useful for misc frontend tasks
+_lab/
+    # Development space for ideas and tools
+```
+
+
 ## Motivation
 
 Web frontend development shouldn't be difficult.
