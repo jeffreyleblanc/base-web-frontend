@@ -1,5 +1,4 @@
 *.pyc
-_inbox/
 # Note there are .gitignore files in some sub directories
 
 
