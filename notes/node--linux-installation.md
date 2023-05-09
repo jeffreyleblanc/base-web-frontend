@@ -1,8 +1,27 @@
 # Installing node on Linux
 
+
+## Installation
+
+As of `Ubuntu 23.04` node is new enough so:
+
+```sh
+# Install
+$ apt-get install nodejs npm
+
+# Check versions (may be updated)
+$ node --version
+#> v18.13.0
+$ npm --version
+#> 9.2.0
+```
+
 ## Direct Install
 
-The following will install node directly on your machine
+For linux distributions where you can only get fairly old versions via the package manager, the following pattern works well to install an up to date version.
+
+Note that you should only do this if you don't have a package manager based node install. You will also want to use an updated node version.
+
 
 ```sh
 # Download and check shasum (may change depending on version)
