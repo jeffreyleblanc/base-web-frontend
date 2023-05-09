@@ -9,7 +9,7 @@ $ cd esbuild-svgjs
 $ npm install esbuild
 $ npm install @svgdotjs/svg.js
 ```
-  
+
 Then make `src/main.js`
 
 ```js
@@ -24,3 +24,4 @@ And
 ```sh
 $ ./node_modules/.bin/esbuild src/main.js --bundle --outfile=out.js --minify
 ```
+
