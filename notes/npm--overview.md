@@ -7,6 +7,11 @@
 * `npm install PKG` in the local project at `./node_modules`
 * `npm install -g PKG` within `/usr/local/...`
 
+If we want to install from a local path:
+
+* `npm install $PATH_TO_THE_MODULE_DIRECTORY`
+* Also review `npm link` for similar
+
 Some other `npm install` options:
 
 * `--save-exact`: use exact version numbers
