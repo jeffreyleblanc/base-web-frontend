@@ -1,0 +1,17 @@
+
+localhost {
+    # root of our filesystem
+    root * {$PWD}
+
+    encode zstd gzip
+
+    # Handle our specific SPA endpoint
+    handle /history/* {
+        root * {$PWD}/history
+        try_files {path} /index.html
+        file_server
+    }
+
+    # default fileserver that allows browsing
+    file_server browse
+}

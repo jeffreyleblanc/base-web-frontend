@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History API Tester</title>
+</head>
+<body>
+<main>
+    <h1>History Tester</h1>
+
+    <div>Current Path:</div>
+    <div id=curr_path></div>
+    <div></div>
+    <button id="btn">update</button>
+</main>
+<script type="text/javascript">
+    // Get our containers
+    const el = {};
+    el.curr_path = document.getElementById("curr_path");
+    el.btn = document.getElementById("btn");
+
+    // Setup to start
+    let count = -1;
+    el.curr_path.textContent = "unknown";
+
+    // Event Handler
+    el.btn.addEventListener("click",()=>{
+        // NOTE: pushState doesn't trigger popstate events
+        count += 1;
+        history.pushState({count},"",`/history/count/${count}/`);
+        el.curr_path.textContent = count;
+    })
+
+    // Popstate tracking
+    window.addEventListener("popstate",(event)=>{
+        console.log("POPSTATE:")
+        console.log("  pathname:",document.location.pathname);
+        console.log("  state:",event.state);
+        if(event.state!=null){
+            el.curr_path.textContent = event.state.count;
+            count = event.state.count;
+        }
+    });
+
+    // Seed the state
+    _start_count = 0;
+    const url = new URL(document.location.href);
+    const subpath = url.pathname.replace("/history","");
+    if(subpath!="" && subpath!="/"){
+        const parts = subpath.split("/");
+        if(parts.length>=3){
+            _start_count = parseInt(parts[2]);
+        }
+    }
+    count = _start_count;
+    el.curr_path.textContent = _start_count;
+    history.replaceState({count:_start_count},"", document.location.href);
+
+</script>
+</body>
+</html>
