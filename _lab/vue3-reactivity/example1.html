@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>My Page</title>
+    <meta name="description" content="A Cool Page">
+    <meta name="author" content="Someone Cool">
+
+    <script>
+        console.log("Start...")
+
+        const obj1 = {
+            v1: "a",
+            v2: "b"
+        }
+        const handler1 = {};
+        const proxy1 = new Proxy(obj1, handler1);
+        console.log(proxy1.v1)
+
+        console.log("===========================================")
+
+        /*
+        The point of the following is that the proxy is SHALLOW
+        */
+
+        const obj2 = {
+            v1: "a",
+            v2: {
+                v3: "b",
+                v4: {
+                    v5: "c"
+                }
+            }
+        }
+        const handler2 = {
+            get(target, prop, receiver){
+                console.warn("GET","t:",target,"p:",prop,"r:",receiver)
+                return target[prop];
+            },
+            set(target, prop, value, receiver){
+                console.warn("SET","t:",target,"p:",prop,"v:",value,"r:",receiver)
+                target[prop] = value;
+            }
+        };
+        const proxy2 = new Proxy(obj2, handler2);
+        console.log("A")
+        console.log(proxy2.v1)
+
+        console.log("B")
+        console.log(proxy2.v2)
+
+        console.log("C")
+        console.log(proxy2.v2.v3)
+
+        console.log("D")
+        let ref = proxy2.v2;
+        console.log("ref:",ref)
+        console.log(ref.v3) // No proxy get
+
+        console.log("E")
+        ref = ref.v4; // No proxy get
+        console.log("ref:",ref)
+        console.log("E",ref.v5) // No proxy get
+
+        console.log("--------------------------")
+
+        console.log("A")
+        proxy2.v1 = "a2";
+        console.log(proxy2.v1) // Triggers a SET
+        console.log(obj2.v1) // NOTE, this IS updated
+
+
+        console.log("B")
+        proxy2.v2.v3 = "b2"; // Actually triggers a GET on v2
+        console.log(proxy2.v2.v3)
+        console.log(obj2.v2.v3) // NOTE, this IS updated
+
+    </script>
+
+</head>
+
+<body>
+</body>
+</html>

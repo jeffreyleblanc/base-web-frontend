@@ -14,3 +14,6 @@
         * [ ] pure vue
         * [ ] vue with tailwind
 
+# Links to Review
+
+* <https://developer.chrome.com/docs/devtools/rendering/performance>
