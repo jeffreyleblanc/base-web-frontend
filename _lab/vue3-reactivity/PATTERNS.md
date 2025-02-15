@@ -143,3 +143,71 @@ I *think* the above is correct, see:
 * <https://www.google.com/search?q=vue3+are+methods+in+methods+reactive>
 
 
+## Question 3
+
+Say we have a set of objects we track by their pk, and we have a general store of them:
+
+```js
+G.store = reactive({
+    obj_by_pk: new Map()
+})
+```
+
+How best handle:
+
+* maintenance of the store:
+    * adding a new object?
+    * editing a current object?
+        * just replace it fully?
+        * just update the changed fields?
+        * what if it *isn't* shallow?
+    * deleting a current object?
+    * checking if an object is in the store?
+* subviews into the store
+    * total number ot items in the store
+    * a sorted and/or filtered list of the items in the store
+        * how share such things across multiple components?
+    * a set of focused objects, e.g.
+        * `G.store.current_obj = null`
+        * `G.store.current_obj = G.store.obj_by_pk(some_pk)`
+* working with object in NON reactive states
+    * e.g. the above are where we want changes to automatically impact the DOM, but what about
+    * in `methods:`
+    * in random other methods outside of components where for example we might want to reference
+      a store of Nodes and Links to generate a new set objects
+        * that method is accessing Proxied objects... but I assume it's not hooking up effects?
+    * Let's say you want to make a local copy of an object for an editing page
+        * how best do this? JSONCLONE the store based reference?
+* Subtle
+    * let's say we have 2 different reactive() stores, and in one we have a tree structure
+      where the tree nodes can REFERENCE items in the other store... how does this work?
+
+This leads to questions about using `shallowReactive` and/or `Object.freeze` around items to leave
+them as vanilla objects. In other words consider:
+
+```js
+G.NRstore = {
+    obj_by_pk: new Map()
+}
+
+G.Rstore = reactive({
+    objs: []
+})
+update_objs = (filter_term)=>{
+    // May be smarter way to turn Map into an Array
+    G.Rstore.objs = Object.freeze([...G.NRstore.entries()].filter(e=>e.value==filter_term))
+}
+```
+
+And if we want a "focus" object that is reactive... we just track that ourselves and update it, or
+can even just do something like:
+
+```js
+G.Rstore = reactive({
+    focus_obj: null
+})
+
+// trigger this when needed:
+G.Rstore.focus_obj = Object.freeze(G.NRstore.obj_by_pk(focus_pk))
+```
+
