@@ -211,3 +211,5 @@ G.Rstore = reactive({
 G.Rstore.focus_obj = Object.freeze(G.NRstore.obj_by_pk(focus_pk))
 ```
 
+**A KEY THING HERE** is I get the impression Vue3 DOM updates *might* be just as efficient if all data is frozen vs proxied?
+If that is **not the case** to a significant degree, then the above may be too costly performance wise?
