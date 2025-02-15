@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>My Page</title>
+    <meta name="description" content="A Cool Page">
+    <meta name="author" content="Someone Cool">
+
+    <script>
+        console.log("Start...")
+
+        G_COUNT = 0;
+
+        // Methods to track the subscribers
+        const G_SUBSCRIBERS = new WeakMap();
+        function getSubscribersForProperty(target, key){
+            let map = G_SUBSCRIBERS.get(target);
+            if(map==undefined){
+                map = new Map();
+                G_SUBSCRIBERS.set(target,map);
+            }
+            let set = map.get(key);
+            if(set==undefined){
+                set = new Set();
+                map.set(key,set);
+            }
+            return set;
+        }
+
+        // This will be set right before an effect is about
+        // to be run. We'll deal with this later.
+        let G_activeEffect;
+        function _track(target, key){
+            if(G_activeEffect){
+                const effects = getSubscribersForProperty(target,key);
+                if(!effects.has(G_activeEffect)){
+                    console.log("=> store effect:",key,G_activeEffect.id); }
+                effects.add(G_activeEffect);
+            }
+        }
+
+
+        function _trigger(target, key){
+            const effects = getSubscribersForProperty(target,key);
+            effects.forEach((effect) =>{
+                console.log(`triggering: ${effect.id}`)
+                effect()
+            })
+        }
+
+
+        function reactive(obj){
+            // It seems Vue *might* clone the obj? as the back references seem broken
+            return new Proxy(obj,{
+                get(target, key){
+                    _track(target, key)
+                    return target[key]
+                },
+                set(target, key, value){
+                    target[key] = value
+                    _trigger(target, key)
+                }
+            })
+        }
+
+        // Was called whenDepsChange... but this is more in line with actual vue
+        function watchEffect(update){
+            // Note this doesn't store "effect" anywhere
+            const effect = () => {
+                G_activeEffect = effect; // Weird scoping???
+                    // see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
+                update();
+                G_activeEffect = null;
+            }
+            effect.id = `effect:${G_COUNT++}`;
+            effect();
+        }
+
+        console.log("--------------------------------------")
+
+        const raw_obj = {
+            v1: 1,
+            v2: 2,
+            v3: undefined,
+            v4: undefined
+        }
+        const store = reactive(raw_obj);
+
+        console.log("--------------------------------------")
+
+        watchEffect(()=>{
+            store.v3 = store.v1+store.v2;
+        });
+        watchEffect(()=>{
+            store.v4 = store.v3*store.v3;
+        });
+
+        console.log("--------------------------------------")
+
+        console.log(store.v3)
+        console.log(store.v4)
+
+        console.log("--------------------------------------")
+
+        store.v1 = 99;
+        console.log(store.v3)
+        console.log(store.v4)
+
+        console.log("--------------------------------------")
+
+        store.v3 = 99;
+        console.log(store.v3)
+        console.log(store.v4)
+
+        console.log("--------------------------------------")
+
+        store.v1 = 2;
+        console.log(store.v3)
+        console.log(store.v4)
+
+    </script>
+
+</head>
+
+<body>
+</body>
+</html>
